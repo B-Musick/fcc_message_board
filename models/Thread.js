@@ -1,12 +1,13 @@
 let mongoose = require('mongoose');
 
 let threadSchema = new mongoose.Schema({
-    text: String, 
+    board: { type: String, default: '' },
+    text: {type:String, default: ''}, 
     created_on: {type: Date, default: Date.now()}, 
     bumped_on: { type: Date, default: Date.now() },
-    reported: Boolean, 
-    delete_password: String, 
-    replies: Array
+    reported: { type:Boolean, default: false}, 
+    delete_password: { type: String, default: '' }, 
+    replies: { type:Array, default: [] }
 })
 
 module.exports = mongoose.model('Thread',threadSchema);

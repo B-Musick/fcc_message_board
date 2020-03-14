@@ -15,6 +15,7 @@ var app = express();
 var mongoose = require('mongoose');
 let helmet = require('helmet');
 let dotenv = require('dotenv');
+var bcrypt = require('bcrypt');
 
 // Configurations added
 dotenv.config();
