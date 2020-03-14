@@ -18,7 +18,8 @@ let dotenv = require('dotenv');
 
 // Configurations added
 dotenv.config();
-app.use(helmet.frameguard({ action: "sameorigin" }))
+app.use(helmet.frameguard({ action: "sameorigin" }));
+app.use(helmet.dnsPrefetchControl());
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
