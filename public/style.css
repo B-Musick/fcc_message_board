@@ -34,3 +34,13 @@ body {
 #submitNewThread {
   margin: 50px;
 }
+
+
+/***************** MAIN INDEX PAGE ********************/
+.thread-container{
+  background-color: cadetblue;
+  width: 60%;
+  border: 2px solid black;
+  padding: 10px;
+  margin: 10px;
+}

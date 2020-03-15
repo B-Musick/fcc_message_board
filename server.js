@@ -17,8 +17,14 @@ let helmet = require('helmet');
 let dotenv = require('dotenv');
 var bcrypt = require('bcrypt');
 
+let Thread = require('./models/Thread');
+let Board = require('./models/Board');
+let Reply = require('./models/Reply')
+
+app.set('view engine', 'ejs'); // Dont have to add .ejs to files
+
 // Configurations added
-dotenv.config();
+
 app.use(helmet.frameguard({ action: "sameorigin" }));
 app.use(helmet.dnsPrefetchControl());
 
@@ -28,7 +34,7 @@ app.use(cors({origin: '*'})); //For FCC testing purposes only
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+dotenv.config();
 mongoose.connect('mongodb://localhost:27017/fcc_message_board',{ useNewUrlParser: true, useUnifiedTopology: true})
 
 // CONNECT TO MONGODB ATLAS DATABASE - pass URI key to connect
@@ -42,21 +48,31 @@ mongoose.connect('mongodb://localhost:27017/fcc_message_board',{ useNewUrlParser
 //   console.log("Error: ", err.message);
 // });
 
-//Sample front-end
-app.route('/b/:board/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/board.html');
-  });
-app.route('/b/:board/:threadid')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/thread.html');
+/**************** Index page (static HTML) *******************
+ * Can create a new thread from here
+ * Or enter the currently existing thread
+*/
+app.get('/',(req, res)=> {
+    Thread.find({}, (err, threads) => { err ? res.json(err) : res.render('index', { threads }); })
   });
 
-//Index page (static HTML)
-app.route('/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/index.html');
+app.route('/b/:board')
+  .get((req, res)=> {
+    Board.findOne({name:req.params.board}).populate('threads').exec((err,foundBoard)=>{
+      // Replace all the id's of the thread with actual threads (populate)
+      err ? res.json('Couldnt load thread'):res.render('board',{board:foundBoard, threads:foundBoard.threads})
+    })
   });
+
+app.route('/b/:board/:threadid')
+  .get(function (req, res) {
+    Thread.findById({_id:req.params.threadid}).populate('replies').exec((err, foundThread)=>{
+      console.log(foundThread.replies)
+      err ? res.json(err): res.render('thread',{thread:foundThread})
+    })
+  });
+
+
 
 //For FCC testing purposes
 fccTestingRoutes(app);
